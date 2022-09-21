@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { SparklesIcon, LightningBoltIcon } from '@heroicons/react/outline'
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-
+import { getAuth, signInWithEmailAndPassword} from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDg5A-ZTsoFMiSPXs9YnPlH4svF72yAoss",
@@ -20,9 +20,22 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const auth = getAuth();
 
 function firebaseLogin() {
-
+    window.alert("hit")
+    document.getElementById("submitButton").innerHTML = `<i class="fa-solid fa-spinner fa-spin text-sm fa-fw"></i>&nbsp; Signing you in...`
+    signInWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
+    
 }
 
 
@@ -37,7 +50,7 @@ const Home = () => {
           <img
             className="h-12 w-auto"
             src="https://invent.psu.edu/wp-content/uploads/2020/06/Brandywine-LaunchBox_Logo_3c_RGB.png"
-            alt="Your Company"
+            alt="PSU Brandywine Launchbox"
           />
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">Sign in to your account</h2>
           <p className="mt-2 text-sm text-gray-600">
@@ -52,7 +65,7 @@ const Home = () => {
    
 
           <div className="mt-6">
-            <form action="#" method="POST" className="space-y-6">
+            <div  className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email address
@@ -107,13 +120,15 @@ const Home = () => {
 
               <div>
                 <button
+                  id="submitButton"
+                  onClick={firebaseLogin}
                   type="submit"
                   className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                 >
                   Sign in
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>

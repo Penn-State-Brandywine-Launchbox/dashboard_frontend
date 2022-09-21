@@ -20,11 +20,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const auth = getAuth();
 
 
 function firebaseRegister() {
-    const auth = getAuth();
-
     if (document.getElementById("email").value != document.getElementById("email_confirmed"))
     createUserWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value)
       .then((userCredential) => {
