@@ -24,33 +24,41 @@ const auth = getAuth();
 
 
 function firebaseRegister() {
-    if (document.getElementById("email").value != document.getElementById("email_confirmed"))
+    document.getElementById("submitButton").innerHTML = `<i class="fa-solid fa-spinner fa-spin text-sm fa-fw"></i>&nbsp; Signing you in...`
+
+    if (document.getElementById("password").value == document.getElementById("password_confirmed").value && document.getElementById("email").value) {
     createUserWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value)
       .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
-        // ...
+        window.location.href = "../dashboard";
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        // ..
+        document.getElementById("error").classList.remove("hidden");
+        document.getElementById("error").innerText = errorMessage;
+        document.getElementById("submitButton").innerHTML = "Create Account";
       });
+    } else {
+        document.getElementById("error").classList.remove("hidden");
+        document.getElementById("error").innerText = "Ensure all fields are properly filled.";
+    }
 }
 
 
 
 const Register = () => {
 
-  document.title = "PSU Launchbox - Register "
+  document.title = "Utility Works - Register "
   return (
     <div className="flex min-h-full bg-white" >
     <div className="flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
       <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
           <img
-            className="h-12 w-auto"
-            src="https://invent.psu.edu/wp-content/uploads/2020/06/Brandywine-LaunchBox_Logo_3c_RGB.png"
+            className="h-20 w-auto text-center mx-auto"
+            src="../Logo.png"
             alt="PSU Launchbox"
           />
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">Create an account</h2>
@@ -66,8 +74,8 @@ const Register = () => {
    
 
           <div className="mt-6">
-            <form action="#" method="POST" className="space-y-6">
-            <div id="error" class="bg-red-600 text-white px-2 py-1 text-md rounded-md border border-red-500 shadow-lg">
+            <div className="space-y-6">
+            <div id="error" class="hidden bg-red-600 text-white px-2 py-1 text-md rounded-md border border-red-500 shadow-lg">
                 <h1 class="text-md">Something went wrong when trying to create your account.</h1>
             </div>
             
@@ -109,7 +117,7 @@ const Register = () => {
                 </label>
                 <div className="mt-1">
                   <input
-                    id="password"
+                    id="password_confirmed"
                     name="password"
                     type="password"
                     autoComplete="current-password"
@@ -118,7 +126,7 @@ const Register = () => {
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="hidden flex items-center justify-between">
                 <div className="flex items-center">
                   <input
                     id="remember-me"
@@ -137,12 +145,14 @@ const Register = () => {
               <div>
                 <button
                   type="submit"
+                  id="submitButton"
+                  onClick={firebaseRegister}
                   className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                 >
-                  Sign in
+                  Create Account
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
@@ -150,7 +160,7 @@ const Register = () => {
     <div className="relative hidden w-0 flex-1 lg:block">
       <img
         className="absolute inset-0 h-full w-full object-cover"
-        src="https://www.brandywine.psu.edu/sites/brandywine/files/styles/photo_gallery_large/public/launchbox20crowd.jpg?itok=_kqJhBZ2"
+        src="https://pbs.twimg.com/media/FOJz3jlWQAIJUCq.jpg:large"
         alt=""
       />
     </div>

@@ -23,17 +23,20 @@ const analytics = getAnalytics(app);
 const auth = getAuth();
 
 function firebaseLogin() {
-    window.alert("hit")
     document.getElementById("submitButton").innerHTML = `<i class="fa-solid fa-spinner fa-spin text-sm fa-fw"></i>&nbsp; Signing you in...`
     signInWithEmailAndPassword(auth, document.getElementById("email").value, document.getElementById("password").value)
       .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
-        // ...
+        window.location.href = "../dashboard"
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+
+        document.getElementById("error").classList.remove("hidden");
+        document.getElementById("error").innerText = errorMessage;
+        document.getElementById("submitButton").innerHTML = "Sign in";
       });
     
 }
@@ -41,15 +44,15 @@ function firebaseLogin() {
 
 const Home = () => {
 
-  document.title = "PSU Launchbox - Login" 
+  document.title = "Utility Works - Login" 
   return (
     <div className="flex min-h-full bg-white" >
     <div className="flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
       <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
           <img
-            className="h-12 w-auto"
-            src="https://invent.psu.edu/wp-content/uploads/2020/06/Brandywine-LaunchBox_Logo_3c_RGB.png"
+            className="h-20 text-center mx-auto w-auto"
+            src="../Logo.png"
             alt="PSU Brandywine Launchbox"
           />
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">Sign in to your account</h2>
@@ -63,8 +66,14 @@ const Home = () => {
 
         <div className="mt-8">
    
+        <div id="error" class="hidden bg-red-600 text-white px-2 py-1 text-md rounded-md border border-red-500 shadow-lg">
+                <h1 class="text-md">Something went wrong when trying to create your account.</h1>
+            </div>
 
           <div className="mt-6">
+
+        
+
             <div  className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -136,7 +145,7 @@ const Home = () => {
     <div className="relative hidden w-0 flex-1 lg:block">
       <img
         className="absolute inset-0 h-full w-full object-cover"
-        src="https://www.brandywine.psu.edu/sites/brandywine/files/styles/photo_gallery_large/public/launchbox20crowd.jpg?itok=_kqJhBZ2"
+        src="https://pbs.twimg.com/media/FOJz3jlWQAIJUCq.jpg:large"
         alt=""
       />
     </div>
