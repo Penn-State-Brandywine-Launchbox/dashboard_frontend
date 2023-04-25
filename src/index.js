@@ -5,7 +5,7 @@ import Layout from "./pages/Layout";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-
+import Admin from "./pages/Admin";
 import "./index.css";
 
 
@@ -20,6 +20,7 @@ export default function App() {
 
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/admin" element={<Admin />}/>
 
         <Route path="/dashboard" element={<Dashboard />}>
 

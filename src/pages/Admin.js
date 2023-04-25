@@ -50,23 +50,6 @@ const people = [
   // More people...
 ]
 
-function checkIn() {
-  // Check in user via API using get request to API
-  // If successful, return true
-  // If not, return false
-
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      window.location.reload();
-    }
-  }
-  xhttp.open("POST", `${process.env.REACT_APP_API_URL}/checkin?uid=${localStorage.getItem("token")}`, true);
-  xhttp.send();
-
-
-}
-
 registerAcc();
 
 // register acc on load
@@ -81,80 +64,52 @@ function registerAcc() {
       window.location.reload();
     }
   }
-  xhttp.open("POST", `${process.env.REACT_APP_API_URL}/register?uid=${localStorage.getItem("token")}`, true);
+  xhttp.open("POST", `${process.env.REACT_APP_API_URL}/register?uid=${localStorage.getItem("token")}&email=${localStorage.getItem("email")}`, true);
   xhttp.send();
 }
 
-function checkOut() {
-  // Check in user via API using get request to API
-  // If successful, return true
-  // If not, return false
+getUsers()
+function getUsers() {
+    // Check in user via API using get request to API
+    // If successful, return true
+    // If not, return false
+    
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let userObject = JSON.parse(this.responseText);
+            // add to resource table
 
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      window.location.reload();
-    }
-  }
-  xhttp.open("POST", `${process.env.REACT_APP_API_URL}/checkout?uid=${localStorage.getItem("token")}`, true);
-  xhttp.send();
-
-
-}
-
-function newMaterial() {
-  let material = window.prompt("Material Name?");
-  let quantity = window.prompt("Quantity?");
-
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      window.location.reload();
-    }
-  }
-  xhttp.open("POST", `${process.env.REACT_APP_API_URL}/material?uid=${localStorage.getItem("token")}&material=${material}&amount=${quantity}`, true);
-  xhttp.send();
-
-}
-
-// Load in dashboard data
-function loadDashboardData() {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      let userObject = JSON.parse(this.responseText);
-
-      let resourceUsage = userObject.resourceUsage;
-
-
-      resourceUsage.forEach((resource) => {
-        const tbody = document.getElementById("resourceTable")
+            userObject.forEach((user) => {
+                const tbody = document.getElementById("userTable")
   
-        const newRow = document.createElement('tr')
-        newRow.innerHTML = `<td>${resource.material}</td><td>${resource.amount}</td><td>${resource.time}</td>`
-
-        tbody.appendChild(newRow)
-      })
-
-      if (userObject.isCheckedIn) {
-        document.getElementById("deskOut").classList.remove("hidden")
-        document.getElementById("buttonOut").classList.remove("hidden")
-
-      } else {
-        document.getElementById("deskIn").classList.remove("hidden")
-        document.getElementById("buttonIn").classList.remove("hidden")
+                const newRow = document.createElement('tr')
+                newRow.innerHTML = `<td>${user.uid}</td><td>${user.email}</td><td>${user.name}</td><td>${JSON.stringify(user.resourceUsage)}<td>${user.trainingComplete}</td></td>`
+        
+                tbody.appendChild(newRow)
+            });
 
 
-      }
+
+
+        }
     }
-  }
-  xhttp.open("POST", `${process.env.REACT_APP_API_URL}/dashboard?uid=${localStorage.getItem("token")}`, true);
-  xhttp.send();
+    xhttp.open("POST", `${process.env.REACT_APP_API_URL}/users`, true);
+    xhttp.send();
 }
 
-loadDashboardData();
-
-const Dashboard = () => {
+function train() {
+    let trainedPerson = window.prompt("Who did you train? (email)")
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        window.location.reload();
+        }
+    }
+    xhttp.open("POST", `${process.env.REACT_APP_API_URL}/train?email=${trainedPerson}`, true);
+    xhttp.send();
+}
+const Admin = () => {
 
 
   const [name, setUsername] = useState("Loading...");
@@ -166,6 +121,7 @@ const Dashboard = () => {
         const uid = user.uid;
         setUsername(user.email.split("@")[0]);
         localStorage.setItem("token", user.uid)
+        localStorage.setItem("email", user.email)
       } else {
         window.location.href = "../login"
       }
@@ -173,7 +129,7 @@ const Dashboard = () => {
     
   });
 
-  document.title = "PSU Launchbox - Dashboard" 
+  document.title = "PSU Launchbox - Admin" 
 
 
   return (
@@ -331,32 +287,10 @@ const Dashboard = () => {
     <div className="bg-indigo-700">
       <div className="mx-auto max-w-2xl py-16 px-4 text-center sm:py-10 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          <span className="block">Welcome to Utility Works.</span>
+          <span className="block">Admin.</span>
+          <button onClick={train} className="text-sm border-2 px-2 py-1 rounded-lg border-white">Mark someone as trained</button>
         </h2>
-        <p id="deskIn" className="hidden text-lg leading-6 text-indigo-200">
-         Looks like you haven't checked in yet. 
-        </p>
-        <p id="deskOut" className="hidden text-lg leading-6 text-indigo-200">
-         Please check out before leaving.
-        </p>
-        <a
-          id="buttonIn"
-          href="#"
-          className="hidden mt-4 inline-flex w-full items-center justify-center rounded-md border border-2 px-5 py-3 text-base font-medium text-white hover:bg-indigo-800 sm:w-half"
-
-          onClick={checkIn}
-        >
-          Check in
-        </a>
-
-        <a
-          id="buttonOut"
-          href="#"
-          className="hidden mt-4 inline-flex w-full items-center justify-center rounded-md border border-2 px-5 py-3 text-base font-medium text-white hover:bg-indigo-800 sm:w-half"
-          onClick={checkOut}
-        >
-          Check out
-        </a>
+     
       </div>
     </div>
 
@@ -365,19 +299,12 @@ const Dashboard = () => {
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-xl font-semibold text-gray-900">Resource Usage</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Keep track of resources you used here at Utility Works.
-          </p>
+          <h1 className="text-xl font-semibold text-gray-900">User Data</h1>
+
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
-            onClick={newMaterial}
-          >
-            Add Resource
-          </button>
+   
+        
         </div>
       </div>
       <div className="mt-8 flex flex-col">
@@ -388,18 +315,23 @@ const Dashboard = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                     Resource Name
+                     uid
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                     Quantity
+                     email
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                     Date/Time
+                     name
                     </th>
-                 
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                     resource usage
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                     training
+                    </th>
                   </tr>
                 </thead>
-                <tbody id="resourceTable" className="divide-y divide-gray-200 bg-white">
+                <tbody id="userTable" className="divide-y divide-gray-200 bg-white">
                 
               
                 </tbody>
@@ -425,4 +357,4 @@ const Dashboard = () => {
 }
 
   
-export default Dashboard;
+export default Admin;
